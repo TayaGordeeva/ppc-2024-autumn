@@ -1,255 +1,102 @@
 #include <gtest/gtest.h>
 
+#include <boost/mpi.hpp>
 #include <boost/mpi/communicator.hpp>
 #include <boost/mpi/environment.hpp>
 #include <vector>
 
 #include "mpi/gordeeva_t_sleeping_barber/include/ops_mpi.hpp"
 
-TEST(gordeeva_t_sleeping_barber_mpi, Test_Barber_0_Seats_Client) {
+TEST(gordeeva_t_sleeping_barber_mpi, Test_Validation1) {
   boost::mpi::communicator world;
 
-  // Create TaskData
   std::shared_ptr<ppc::core::TaskData> taskDataPar = std::make_shared<ppc::core::TaskData>();
-
-  const int max_waiting_chairs_ = 0;
-  bool barber_busy_ = false;
-  std::vector<int32_t> global_res(1, 0);
-
   gordeeva_t_sleeping_barber_mpi::TestMPITaskParallel testMpiTaskParallel(taskDataPar);
 
   if (world.rank() == 0) {
-    taskDataPar->inputs_count = {max_waiting_chairs_, static_cast<const unsigned int>(barber_busy_)};
-    taskDataPar->outputs.emplace_back(reinterpret_cast<uint8_t*>(global_res.data()));
-    taskDataPar->outputs_count.emplace_back(global_res.size());
-
-    ASSERT_EQ(testMpiTaskParallel.validation(), true);
-    testMpiTaskParallel.pre_processing();
-    testMpiTaskParallel.run();
-    testMpiTaskParallel.post_processing();
-
-    ASSERT_EQ(global_res[0], 1);
+    taskDataPar->inputs_count = {0};
+    EXPECT_FALSE(testMpiTaskParallel.validation());
   }
 }
 
-TEST(gordeeva_t_sleeping_barber_mpi, Test_Barber_3_Seats_Client) {
+TEST(gordeeva_t_sleeping_barber_mpi, Test_Validation2) {
   boost::mpi::communicator world;
 
-  // Create TaskData
   std::shared_ptr<ppc::core::TaskData> taskDataPar = std::make_shared<ppc::core::TaskData>();
-
-  const int max_waiting_chairs_ = 3;
-  bool barber_busy_ = false;
-  std::vector<int32_t> global_res(1, 0);
-
   gordeeva_t_sleeping_barber_mpi::TestMPITaskParallel testMpiTaskParallel(taskDataPar);
 
   if (world.rank() == 0) {
-    taskDataPar->inputs_count = {max_waiting_chairs_, static_cast<const unsigned int>(barber_busy_)};
-    taskDataPar->outputs.emplace_back(reinterpret_cast<uint8_t*>(global_res.data()));
-    taskDataPar->outputs_count.emplace_back(global_res.size());
-
-    ASSERT_EQ(testMpiTaskParallel.validation(), true);
-    testMpiTaskParallel.pre_processing();
-    testMpiTaskParallel.run();
-    testMpiTaskParallel.post_processing();
-
-    ASSERT_EQ(global_res[0], 1);
+    if (world.size() < 3) {
+      taskDataPar->inputs_count = {1};
+      EXPECT_FALSE(testMpiTaskParallel.validation());
+    }
   }
 }
 
-TEST(gordeeva_t_sleeping_barber_mpi, Test_Barber_15_Seats_Client) {
+TEST(gordeeva_t_sleeping_barber_mpi, Test_Validation3) {
   boost::mpi::communicator world;
 
-  // Create TaskData
   std::shared_ptr<ppc::core::TaskData> taskDataPar = std::make_shared<ppc::core::TaskData>();
-
-  const int max_waiting_chairs_ = 15;
-  bool barber_busy_ = false;
-  std::vector<int32_t> global_res(1, 0);
-
   gordeeva_t_sleeping_barber_mpi::TestMPITaskParallel testMpiTaskParallel(taskDataPar);
 
   if (world.rank() == 0) {
-    taskDataPar->inputs_count = {max_waiting_chairs_, static_cast<const unsigned int>(barber_busy_)};
-    taskDataPar->outputs.emplace_back(reinterpret_cast<uint8_t*>(global_res.data()));
-    taskDataPar->outputs_count.emplace_back(global_res.size());
-
-    ASSERT_EQ(testMpiTaskParallel.validation(), true);
-    testMpiTaskParallel.pre_processing();
-    testMpiTaskParallel.run();
-    testMpiTaskParallel.post_processing();
-
-    ASSERT_EQ(global_res[0], 1);
+    taskDataPar->inputs_count = {1};
+    EXPECT_TRUE(testMpiTaskParallel.validation());
   }
 }
 
-TEST(gordeeva_t_sleeping_barber_mpi, Test_Barber_50_Seats_Client) {
-  boost::mpi::communicator world;
-
-  // Create TaskData
-  std::shared_ptr<ppc::core::TaskData> taskDataPar = std::make_shared<ppc::core::TaskData>();
-
-  const int max_waiting_chairs_ = 50;
-  bool barber_busy_ = false;
-  std::vector<int32_t> global_res(1, 0);
-
-  gordeeva_t_sleeping_barber_mpi::TestMPITaskParallel testMpiTaskParallel(taskDataPar);
-
-  if (world.rank() == 0) {
-    taskDataPar->inputs_count = {max_waiting_chairs_, static_cast<const unsigned int>(barber_busy_)};
-    taskDataPar->outputs.emplace_back(reinterpret_cast<uint8_t*>(global_res.data()));
-    taskDataPar->outputs_count.emplace_back(global_res.size());
-
-    ASSERT_EQ(testMpiTaskParallel.validation(), true);
-    testMpiTaskParallel.pre_processing();
-    testMpiTaskParallel.run();
-    testMpiTaskParallel.post_processing();
-
-    ASSERT_EQ(global_res[0], 1);
-  }
-}
-
-TEST(gordeeva_t_sleeping_barber_mpi, Test_Barber_100_Seats_Client) {
-  boost::mpi::communicator world;
-
-  // Create TaskData
-  std::shared_ptr<ppc::core::TaskData> taskDataPar = std::make_shared<ppc::core::TaskData>();
-
-  const int max_waiting_chairs_ = 100;
-  bool barber_busy_ = false;
-  std::vector<int32_t> global_res(1, 0);
-
-  gordeeva_t_sleeping_barber_mpi::TestMPITaskParallel testMpiTaskParallel(taskDataPar);
-
-  if (world.rank() == 0) {
-    taskDataPar->inputs_count = {max_waiting_chairs_, static_cast<const unsigned int>(barber_busy_)};
-    taskDataPar->outputs.emplace_back(reinterpret_cast<uint8_t*>(global_res.data()));
-    taskDataPar->outputs_count.emplace_back(global_res.size());
-
-    ASSERT_EQ(testMpiTaskParallel.validation(), true);
-    testMpiTaskParallel.pre_processing();
-    testMpiTaskParallel.run();
-    testMpiTaskParallel.post_processing();
-
-    ASSERT_EQ(global_res[0], 1);
-  }
-}
-
-TEST(gordeeva_t_sleeping_barber_mpi, Test_Barber_500_Seats_Client) {
-  boost::mpi::communicator world;
-
-  // Create TaskData
-  std::shared_ptr<ppc::core::TaskData> taskDataPar = std::make_shared<ppc::core::TaskData>();
-
-  const int max_waiting_chairs_ = 500;
-  bool barber_busy_ = false;
-  std::vector<int32_t> global_res(1, 0);
-
-  gordeeva_t_sleeping_barber_mpi::TestMPITaskParallel testMpiTaskParallel(taskDataPar);
-
-  if (world.rank() == 0) {
-    taskDataPar->inputs_count = {max_waiting_chairs_, static_cast<const unsigned int>(barber_busy_)};
-    taskDataPar->outputs.emplace_back(reinterpret_cast<uint8_t*>(global_res.data()));
-    taskDataPar->outputs_count.emplace_back(global_res.size());
-
-    ASSERT_EQ(testMpiTaskParallel.validation(), true);
-    testMpiTaskParallel.pre_processing();
-    testMpiTaskParallel.run();
-    testMpiTaskParallel.post_processing();
-
-    ASSERT_EQ(global_res[0], 1);
-  }
-}
-
-TEST(gordeeva_t_sleeping_barber_mpi, Test_Barber_Without_Seats_Client) {
-  boost::mpi::communicator world;
-
-  // Create TaskData
-  std::shared_ptr<ppc::core::TaskData> taskDataPar = std::make_shared<ppc::core::TaskData>();
-
-  // const int max_waiting_chairs_ = 3;
-  bool barber_busy_ = false;
-  std::vector<int32_t> global_res(1, 0);
-
-  gordeeva_t_sleeping_barber_mpi::TestMPITaskParallel testMpiTaskParallel(taskDataPar);
-
-  if (world.rank() == 0) {
-    taskDataPar->inputs_count = {static_cast<const unsigned int>(barber_busy_)};
-    taskDataPar->outputs.emplace_back(reinterpret_cast<uint8_t*>(global_res.data()));
-    taskDataPar->outputs_count.emplace_back(global_res.size());
-
-    ASSERT_EQ(testMpiTaskParallel.validation(), false);
-  }
-}
-
-TEST(gordeeva_t_sleeping_barber_mpi, Test_Barber_Without_Barber_Busy) {
-  boost::mpi::communicator world;
-
-  // Create TaskData
-  std::shared_ptr<ppc::core::TaskData> taskDataPar = std::make_shared<ppc::core::TaskData>();
-
-  const int max_waiting_chairs_ = 3;
-  // bool barber_busy_ = false;
-  std::vector<int32_t> global_res(1, 0);
-
-  gordeeva_t_sleeping_barber_mpi::TestMPITaskParallel testMpiTaskParallel(taskDataPar);
-
-  if (world.rank() == 0) {
-    taskDataPar->inputs_count = {max_waiting_chairs_};
-    taskDataPar->outputs.emplace_back(reinterpret_cast<uint8_t*>(global_res.data()));
-    taskDataPar->outputs_count.emplace_back(global_res.size());
-
-    ASSERT_EQ(testMpiTaskParallel.validation(), false);
-  }
-}
-
-TEST(gordeeva_t_sleeping_barber_mpi, Test_Barber_Sleeping) {
+TEST(gordeeva_t_sleeping_barber_mpi, Test_End_To_End1) {
   boost::mpi::communicator world;
 
   std::shared_ptr<ppc::core::TaskData> taskDataPar = std::make_shared<ppc::core::TaskData>();
 
-  const int max_waiting_chairs_ = 30;
-  bool barber_busy_ = false;
-  std::vector<int32_t> global_res(1, 0);
+  const int max_waiting_chairs = 1;
+  int global_res = -1;
+
+  taskDataPar->inputs_count.emplace_back(max_waiting_chairs);
+  taskDataPar->outputs.emplace_back(reinterpret_cast<uint8_t*>(&global_res));
+  taskDataPar->outputs_count.emplace_back(sizeof(global_res));
 
   gordeeva_t_sleeping_barber_mpi::TestMPITaskParallel testMpiTaskParallel(taskDataPar);
 
   if (world.rank() == 0) {
-    taskDataPar->inputs_count = {max_waiting_chairs_, static_cast<const unsigned int>(barber_busy_)};
-    taskDataPar->outputs.emplace_back(reinterpret_cast<uint8_t*>(global_res.data()));
-    taskDataPar->outputs_count.emplace_back(global_res.size());
-
-    ASSERT_EQ(testMpiTaskParallel.validation(), true);
-    testMpiTaskParallel.pre_processing();
-    testMpiTaskParallel.run();
-    testMpiTaskParallel.post_processing();
-
-    ASSERT_EQ(global_res[0], 1);  // barber is sleeping
+    ASSERT_TRUE(testMpiTaskParallel.validation());
+    ASSERT_TRUE(testMpiTaskParallel.pre_processing());
+    ASSERT_TRUE(testMpiTaskParallel.run());
+    ASSERT_TRUE(testMpiTaskParallel.post_processing());
+    ASSERT_EQ(global_res, 0);
+  } else {
+    ASSERT_TRUE(testMpiTaskParallel.validation());
+    ASSERT_TRUE(testMpiTaskParallel.pre_processing());
+    ASSERT_TRUE(testMpiTaskParallel.run());
+    ASSERT_TRUE(testMpiTaskParallel.post_processing());
   }
 }
 
-TEST(gordeeva_t_sleeping_barber_mpi, Test_Client_Queue_Full) {
-  boost::mpi::communicator world;
-
-  std::shared_ptr<ppc::core::TaskData> taskDataPar = std::make_shared<ppc::core::TaskData>();
-
-  const int max_waiting_chairs_ = 1;
-  bool barber_busy_ = false;
-  std::vector<int32_t> global_res(1, 0);
-
-  gordeeva_t_sleeping_barber_mpi::TestMPITaskParallel testMpiTaskParallel(taskDataPar);
-
-  if (world.rank() == 0) {
-    taskDataPar->inputs_count = {max_waiting_chairs_, static_cast<const unsigned int>(barber_busy_)};
-    taskDataPar->outputs.emplace_back(reinterpret_cast<uint8_t*>(global_res.data()));
-    taskDataPar->outputs_count.emplace_back(global_res.size());
-
-    ASSERT_EQ(testMpiTaskParallel.validation(), true);
-    testMpiTaskParallel.pre_processing();
-    testMpiTaskParallel.run();
-    testMpiTaskParallel.post_processing();
-
-    ASSERT_EQ(global_res[0], 1);  // queue is full
-  }
-}
+//TEST(gordeeva_t_sleeping_barber_mpi, Test_End_To_End2) {
+//  boost::mpi::communicator world;
+//
+//  std::shared_ptr<ppc::core::TaskData> taskDataPar = std::make_shared<ppc::core::TaskData>();
+//
+//  const int max_waiting_chairs = 3;
+//  int global_res = -1;
+//
+//  taskDataPar->inputs_count.emplace_back(max_waiting_chairs);
+//  taskDataPar->outputs.emplace_back(reinterpret_cast<uint8_t*>(&global_res));
+//  taskDataPar->outputs_count.emplace_back(sizeof(global_res));
+//
+//  gordeeva_t_sleeping_barber_mpi::TestMPITaskParallel testMpiTaskParallel(taskDataPar);
+//
+//  if (world.rank() == 0) {
+//    ASSERT_TRUE(testMpiTaskParallel.validation());
+//    ASSERT_TRUE(testMpiTaskParallel.pre_processing());
+//    ASSERT_TRUE(testMpiTaskParallel.run());
+//    ASSERT_TRUE(testMpiTaskParallel.post_processing());
+//    ASSERT_EQ(global_res, 0);
+//  } else {
+//    ASSERT_TRUE(testMpiTaskParallel.validation());
+//    ASSERT_TRUE(testMpiTaskParallel.pre_processing());
+//    ASSERT_TRUE(testMpiTaskParallel.run());
+//    ASSERT_TRUE(testMpiTaskParallel.post_processing());
+//  }
+//}

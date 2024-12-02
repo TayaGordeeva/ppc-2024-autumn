@@ -25,15 +25,14 @@ class TestMPITaskParallel : public ppc::core::Task {
   bool post_processing() override;
 
  private:
-  int max_waiting_chairs;
-  int barber_busy;
-  std::queue<int> waiting_clients;
-  std::vector<int> res;
-  std::mutex queue_mutex;
+  size_t max_waiting_chairs;
+  int result;
   boost::mpi::communicator world;
 
-  void serve_next_client();
-  static void sleep();
-  bool add_client_to_queue(int client_id);
+  void barber_logic();
+  void dispatcher_logic();
+  void client_logic();
+
+  void serve_next_client(int client_id);
 };
 }  // namespace gordeeva_t_sleeping_barber_mpi

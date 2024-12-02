@@ -25,6 +25,8 @@ bool gordeva_t_max_val_of_column_matrix_mpi::TestMPITaskSequential::pre_processi
   return true;
 }
 
+
+
 bool gordeva_t_max_val_of_column_matrix_mpi::TestMPITaskSequential::validation() {
   internal_order_test();
 
