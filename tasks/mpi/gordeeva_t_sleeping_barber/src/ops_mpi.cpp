@@ -1,4 +1,4 @@
-#include "mpi/gordeeva_t_sleeping_barber/include/ops_mpi.hpp"
+#include "mpi/gordeeva_sleeping_barber_test/include/ops_mpi.hpp"
 
 #include <algorithm>
 #include <functional>
@@ -29,11 +29,10 @@ bool gordeeva_t_sleeping_barber_mpi::TestMPITaskParallel::validation() {
       std::cerr << "[VALIDATION] Invalid number of chairs: " << taskData->inputs_count[0] << std::endl;
       return false;
     }
-
-    if (world.size() < 3) {
-      std::cerr << "[VALIDATION] Not enough processes. Need at least 3." << std::endl;
-      return false;
-    }
+  }
+  if (world.size() < 3) {
+    std::cerr << "[VALIDATION] Not enough processes. Need at least 3." << std::endl;
+    return false;
   }
 
   return true;
@@ -56,6 +55,8 @@ bool gordeeva_t_sleeping_barber_mpi::TestMPITaskParallel::run() {
 bool gordeeva_t_sleeping_barber_mpi::TestMPITaskParallel::post_processing() {
   internal_order_test();
 
+  world.barrier();
+
   if (world.rank() == 0) {
     if (!taskData->outputs.empty() && taskData->outputs_count[0] == sizeof(int)) {
       *reinterpret_cast<int*>(taskData->outputs[0]) = result;
@@ -74,8 +75,8 @@ void gordeeva_t_sleeping_barber_mpi::TestMPITaskParallel::barber_logic() {
     world.recv(1, 0, client_id);
 
     if (client_id == -1) {
-      result = 0;
       std::cout << "[BARBER] All clients served. Stopping." << std::endl;
+      result = 0;
       return;
     }
 
@@ -112,7 +113,6 @@ void gordeeva_t_sleeping_barber_mpi::TestMPITaskParallel::dispatcher_logic() {
       waiting_clients.pop();
       world.send(0, 0, next_client);
       barber_busy = true;
-      std::cout << "[DISPATCHER] Sent client " << next_client << " to barber." << std::endl;
     }
 
     if (world.iprobe(0, 4)) {
@@ -123,8 +123,8 @@ void gordeeva_t_sleeping_barber_mpi::TestMPITaskParallel::dispatcher_logic() {
     }
 
     if (waiting_clients.empty() && remaining_clients == 0 && !barber_busy) {
-      std::cout << "[DISPATCHER] All clients served. Sending stop signal to barber." << std::endl;
       world.send(0, 0, -1);
+      std::cout << "[DISPATCHER] All clients served. Sending stop signal to barber." << std::endl;
       break;
     }
 
